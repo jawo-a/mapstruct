@@ -835,6 +835,11 @@ public class BeanMappingMethod extends NormalTypeMappingMethod {
                 return new ConstructorAccessor( parameterBindings, constructorAccessors );
             }
 
+            final ExecutableElement customConstructor = ctx.findCustomConstructor( type.getTypeElement() );
+            if ( customConstructor != null ) {
+                return getConstructorAccessor( type, customConstructor );
+            }
+
             List<ExecutableElement> constructors = ElementFilter.constructorsIn( type.getTypeElement()
                 .getEnclosedElements() );
 

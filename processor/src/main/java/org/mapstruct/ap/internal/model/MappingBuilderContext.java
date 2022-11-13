@@ -14,6 +14,7 @@ import java.util.Set;
 import java.util.function.Supplier;
 
 import javax.lang.model.element.AnnotationMirror;
+import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.TypeElement;
 
 import org.mapstruct.ap.internal.model.common.Assignment;
@@ -30,6 +31,7 @@ import org.mapstruct.ap.internal.util.ElementUtils;
 import org.mapstruct.ap.internal.util.FormattingMessager;
 import org.mapstruct.ap.internal.util.Services;
 import org.mapstruct.ap.internal.util.TypeUtils;
+import org.mapstruct.ap.spi.CustomConstructorProvider;
 import org.mapstruct.ap.spi.EnumMappingStrategy;
 import org.mapstruct.ap.spi.EnumTransformationStrategy;
 import org.mapstruct.ap.spi.MappingExclusionProvider;
@@ -52,6 +54,11 @@ public class MappingBuilderContext {
     private static final MappingExclusionProvider SUB_MAPPING_EXCLUSION_PROVIDER = Services.get(
         MappingExclusionProvider.class,
         new DefaultMappingExclusionProvider()
+    );
+
+    private static final CustomConstructorProvider CUSTOM_CONSTRUCTOR_PROVIDER = Services.get(
+        CustomConstructorProvider.class,
+        new NoOpCustomConstructorProvider()
     );
 
     /**
@@ -192,6 +199,10 @@ public class MappingBuilderContext {
 
     public AccessorNamingUtils getAccessorNaming() {
         return accessorNaming;
+    }
+
+    public ExecutableElement findCustomConstructor(TypeElement typeElement) {
+        return CUSTOM_CONSTRUCTOR_PROVIDER.findConstructor( typeElement );
     }
 
     public EnumMappingStrategy getEnumMappingStrategy() {
